@@ -9,23 +9,10 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 
 from controller import Controller
-
-import sys
-import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d import Axes3D
-from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
-                               QHBoxLayout, QLabel, QLineEdit, QPushButton, 
-                               QTextEdit, QGroupBox, QGridLayout, QRadioButton,
-                               QButtonGroup, QScrollArea, QFrame, QSplitter,
-                               QTableWidget, QTableWidgetItem, QHeaderView, QTabWidget)
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QFont
-
-# Placeholder classes - you'll need to import your actual classes
-# from your_module import P2, P3, Quaternion
 
 class VisualizationWidget(QWidget):
     def __init__(self):
@@ -35,11 +22,10 @@ class VisualizationWidget(QWidget):
         self.canvas = FigureCanvas(self.figure)
         self.layout.addWidget(self.canvas)
         
-        # Control buttons
         controls_layout = QHBoxLayout()
-        self.reset_view_btn = QPushButton("🔄 Reset View")
-        self.toggle_grid_btn = QPushButton("⊞ Toggle Grid")
-        self.clear_plot_btn = QPushButton("🗑️ Clear Plot")
+        self.reset_view_btn = QPushButton("Reset View")
+        self.toggle_grid_btn = QPushButton("Toggle Grid")
+        self.clear_plot_btn = QPushButton("Clear Plot")
         
         self.reset_view_btn.clicked.connect(self.reset_view)
         self.toggle_grid_btn.clicked.connect(self.toggle_grid)
@@ -73,7 +59,6 @@ class VisualizationWidget(QWidget):
             self.ax.set_title('2D Point Transformation', fontsize=14, color='white', pad=20)
             self.ax.set_aspect('equal', adjustable='box')
         
-        # Dark theme styling
         self.figure.patch.set_facecolor('#2c3e50')
         self.ax.set_facecolor('#34495e')
         self.ax.tick_params(colors='white')
@@ -98,7 +83,6 @@ class VisualizationWidget(QWidget):
             
         self.ax.clear()
         
-        # Reapply styling after clear
         self.ax.set_facecolor('#34495e')
         self.ax.tick_params(colors='white')
         self.ax.grid(self.grid_visible, alpha=0.3, color='white')
@@ -109,7 +93,6 @@ class VisualizationWidget(QWidget):
             self.ax.set_zlabel('Z', fontsize=12, color='white')
             self.ax.set_title('3D Point Transformation', fontsize=14, color='white', pad=20)
             
-            # Plot original points
             if len(original_points) > 0:
                 orig_x = [p.x for p in original_points if hasattr(p, 'x')]
                 orig_y = [p.y for p in original_points if hasattr(p, 'y')]
@@ -119,11 +102,9 @@ class VisualizationWidget(QWidget):
                     self.ax.scatter(orig_x, orig_y, orig_z, c='#3498db', s=100, 
                                   alpha=0.8, label='Original Points', marker='o')
                     
-                    # Connect points with lines
                     if len(orig_x) > 1:
                         self.ax.plot(orig_x, orig_y, orig_z, c='#3498db', alpha=0.5, linewidth=2)
             
-            # Plot transformed points
             if transformed_points is not None and transformed_points.shape[0] >= 3:
                 trans_x = transformed_points[0, :]
                 trans_y = transformed_points[1, :]
@@ -132,17 +113,14 @@ class VisualizationWidget(QWidget):
                 self.ax.scatter(trans_x, trans_y, trans_z, c='#e74c3c', s=100, 
                               alpha=0.8, label='Transformed Points', marker='^')
                 
-                # Connect transformed points with lines
                 if len(trans_x) > 1:
                     self.ax.plot(trans_x, trans_y, trans_z, c='#e74c3c', alpha=0.5, linewidth=2)
                 
-                # Draw arrows from original to transformed
                 if len(original_points) > 0 and len(orig_x) == len(trans_x):
                     for i in range(len(orig_x)):
                         self.ax.plot([orig_x[i], trans_x[i]], [orig_y[i], trans_y[i]], 
                                    [orig_z[i], trans_z[i]], c='#f39c12', alpha=0.6, linewidth=1.5)
             
-            # Style 3D axes
             self.ax.xaxis.pane.fill = False
             self.ax.yaxis.pane.fill = False
             self.ax.zaxis.pane.fill = False
@@ -153,13 +131,12 @@ class VisualizationWidget(QWidget):
             self.ax.yaxis.pane.set_alpha(0.1)
             self.ax.zaxis.pane.set_alpha(0.1)
             
-        else:  # 2D plotting
+        else:  
             self.ax.set_xlabel('X', fontsize=12, color='white')
             self.ax.set_ylabel('Y', fontsize=12, color='white')
             self.ax.set_title('2D Point Transformation', fontsize=14, color='white', pad=20)
             self.ax.set_aspect('equal', adjustable='box')
             
-            # Plot original points
             if len(original_points) > 0:
                 orig_x = [p.x for p in original_points if hasattr(p, 'x')]
                 orig_y = [p.y for p in original_points if hasattr(p, 'y')]
@@ -168,11 +145,9 @@ class VisualizationWidget(QWidget):
                     self.ax.scatter(orig_x, orig_y, c='#3498db', s=100, 
                                   alpha=0.8, label='Original Points', marker='o')
                     
-                    # Connect points with lines
                     if len(orig_x) > 1:
                         self.ax.plot(orig_x, orig_y, c='#3498db', alpha=0.5, linewidth=2)
             
-            # Plot transformed points
             if transformed_points is not None and transformed_points.shape[0] >= 2:
                 trans_x = transformed_points[0, :]
                 trans_y = transformed_points[1, :]
@@ -180,17 +155,14 @@ class VisualizationWidget(QWidget):
                 self.ax.scatter(trans_x, trans_y, c='#e74c3c', s=100, 
                               alpha=0.8, label='Transformed Points', marker='^')
                 
-                # Connect transformed points with lines
                 if len(trans_x) > 1:
                     self.ax.plot(trans_x, trans_y, c='#e74c3c', alpha=0.5, linewidth=2)
                 
-                # Draw arrows from original to transformed
                 if len(original_points) > 0 and len(orig_x) == len(trans_x):
                     for i in range(len(orig_x)):
                         self.ax.annotate('', xy=(trans_x[i], trans_y[i]), xytext=(orig_x[i], orig_y[i]),
                                        arrowprops=dict(arrowstyle='->', color='#f39c12', lw=2, alpha=0.7))
         
-        # Add legend if we have both original and transformed points
         if len(original_points) > 0 and transformed_points is not None:
             legend = self.ax.legend(loc='upper right', frameon=True, fancybox=True, shadow=True)
             legend.get_frame().set_facecolor('#34495e')
@@ -198,7 +170,6 @@ class VisualizationWidget(QWidget):
             for text in legend.get_texts():
                 text.set_color('white')
         
-        # Auto-scale to fit all points
         if len(original_points) > 0 or (transformed_points is not None and transformed_points.size > 0):
             margins = 0.1
             if self.is_3d:
@@ -222,7 +193,6 @@ class VisualizationWidget(QWidget):
     def clear_plot(self):
         if self.ax:
             self.ax.clear()
-            # Reapply basic styling
             self.ax.set_facecolor('#34495e')
             self.ax.tick_params(colors='white')
             self.ax.grid(self.grid_visible, alpha=0.3, color='white')
@@ -255,20 +225,16 @@ class GeometricTransformGUI(QMainWindow):
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         
-        # Create splitter for better layout
         splitter = QSplitter(Qt.Horizontal)
         central_widget_layout = QVBoxLayout(central_widget)
         central_widget_layout.addWidget(splitter)
         
-        # Left panel for controls
         left_panel = QWidget()
         left_layout = QVBoxLayout(left_panel)
         
-        # Right panel for results
         right_panel = QWidget()
         right_layout = QVBoxLayout(right_panel)
         
-        # Title
         title_label = QLabel("🔧 Geometric Transformer")
         title_label.setObjectName("title")
         title_font = QFont()
@@ -278,7 +244,6 @@ class GeometricTransformGUI(QMainWindow):
         title_label.setAlignment(Qt.AlignCenter)
         left_layout.addWidget(title_label)
         
-        # Mode selection
         mode_group = QGroupBox("Transformation Mode")
         mode_layout = QHBoxLayout(mode_group)
         
@@ -295,11 +260,9 @@ class GeometricTransformGUI(QMainWindow):
         mode_layout.addWidget(self.mode_3d)
         left_layout.addWidget(mode_group)
         
-        # Point management
         points_group = QGroupBox("Point Management")
         points_layout = QVBoxLayout(points_group)
         
-        # Add point section
         add_point_layout = QGridLayout()
         
         self.x_input = QLineEdit("0.0")
@@ -320,13 +283,11 @@ class GeometricTransformGUI(QMainWindow):
         
         points_layout.addLayout(add_point_layout)
         
-        # Point list display
         self.points_table = QTableWidget()
         self.points_table.setMaximumHeight(150)
         self.update_points_table()
         points_layout.addWidget(self.points_table)
         
-        # Clear points button
         self.clear_points_btn = QPushButton("🗑️ Clear All Points")
         self.clear_points_btn.setObjectName("clear_button")
         self.clear_points_btn.clicked.connect(self.clear_points)
@@ -334,21 +295,17 @@ class GeometricTransformGUI(QMainWindow):
         
         left_layout.addWidget(points_group)
         
-        # Transformation parameters
         transform_group = QGroupBox("Transformation Parameters")
         transform_layout = QGridLayout(transform_group)
         
-        # Scale
         transform_layout.addWidget(QLabel("Scale:"), 0, 0)
         self.scale_input = QLineEdit("1.0")
         transform_layout.addWidget(self.scale_input, 0, 1)
         
-        # Rotation angle
         transform_layout.addWidget(QLabel("Angle (°):"), 1, 0)
         self.angle_input = QLineEdit("0.0")
         transform_layout.addWidget(self.angle_input, 1, 1)
         
-        # Rotation axis (3D only)
         self.axis_label = QLabel("Rotation Axis:")
         self.axis_x_input = QLineEdit("0.0")
         self.axis_y_input = QLineEdit("0.0")
@@ -364,7 +321,6 @@ class GeometricTransformGUI(QMainWindow):
         axis_layout.addWidget(self.axis_z_input)
         transform_layout.addLayout(axis_layout, 2, 1)
         
-        # Translation
         transform_layout.addWidget(QLabel("Translation X:"), 3, 0)
         self.tx_input = QLineEdit("0.0")
         transform_layout.addWidget(self.tx_input, 3, 1)
@@ -378,18 +334,15 @@ class GeometricTransformGUI(QMainWindow):
         transform_layout.addWidget(self.tz_label, 5, 0)
         transform_layout.addWidget(self.tz_input, 5, 1)
         
-        # Initially hide 3D controls
         self.set_3d_controls_visible(False)
         
         left_layout.addWidget(transform_group)
         
-        # Perform transformation button
         self.perform_btn = QPushButton("🚀 Perform Transformation")
         self.perform_btn.setObjectName("calculate_button")
         self.perform_btn.clicked.connect(self.perform_transformation)
         left_layout.addWidget(self.perform_btn)
         
-        # Add preset buttons
         preset_layout = QHBoxLayout()
         self.preset_rotate_btn = QPushButton("📐 Rotate 90°")
         self.preset_scale_btn = QPushButton("📏 Scale 2x")
@@ -406,8 +359,7 @@ class GeometricTransformGUI(QMainWindow):
         
         left_layout.addStretch()
         
-        # Right panel - Results
-        results_title = QLabel("📊 Results")
+        results_title = QLabel("Results")
         results_title.setObjectName("title")
         results_title.setAlignment(Qt.AlignCenter)
         right_layout.addWidget(results_title)
@@ -416,7 +368,6 @@ class GeometricTransformGUI(QMainWindow):
         self.results_text.setReadOnly(True)
         right_layout.addWidget(self.results_text)
         
-        # Add panels to splitter
         splitter.addWidget(left_panel)
         splitter.addWidget(right_panel)
         splitter.setStretchFactor(0, 1)
@@ -630,9 +581,9 @@ class GeometricTransformGUI(QMainWindow):
         try:
             x = float(self.x_input.text())
             y = float(self.y_input.text())
+            z = float(self.z_input.text())
             
             if self.is_3d_mode:
-                z = float(self.z_input.text())
                 self.controller.add3DPoint(x, y, z)
                 self.results_text.append(f"Added 3D point: ({x:.2f}, {y:.2f}, {z:.2f})")
             else:
@@ -675,13 +626,11 @@ class GeometricTransformGUI(QMainWindow):
     
     def perform_transformation(self):
         try:
-            # Get transformation parameters
             scale = float(self.scale_input.text())
             angle = float(self.angle_input.text())
             tx = float(self.tx_input.text())
             ty = float(self.ty_input.text())
             
-            # Check if we have points
             points = self.controller.current3DPoints if self.is_3d_mode else self.controller.current2DPoints
             if not points:
                 self.results_text.append("Error: No points to transform. Please add some points first.")
@@ -701,7 +650,6 @@ class GeometricTransformGUI(QMainWindow):
                 self.results_text.append(f"Rotation: {angle}° around axis ({axis_x:.2f}, {axis_y:.2f}, {axis_z:.2f})")
                 self.results_text.append(f"Translation: ({tx:.2f}, {ty:.2f}, {tz:.2f})")
                 
-                # Perform 3D transformation
                 result = self.controller.perform3D(axis_x, axis_y, axis_z, scale, angle, tx, ty, tz)
                 
             else:
@@ -709,10 +657,8 @@ class GeometricTransformGUI(QMainWindow):
                 self.results_text.append(f"Rotation: {angle}°")
                 self.results_text.append(f"Translation: ({tx:.2f}, {ty:.2f})")
                 
-                # Perform 2D transformation
                 result = self.controller.perform2D(scale, angle, tx, ty)
             
-            # Display results
             self.results_text.append("\n--- Transformed Points ---")
             if result is not None:
                 for i in range(result.shape[1]):
