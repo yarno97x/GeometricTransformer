@@ -28,11 +28,11 @@ class Quaternion:
         return f"({self.x}, {self.y}, {self.z}, {self.w})"
     
     def rotation_matrix(self):
-        self.r = np.round(np.array([
+        self.r = np.array([
             [1 - 2*(self.y ** 2 + self.z ** 2),       2 * (self.x * self.y - self.z * self.w), 2 * (self.x * self.z + self.y * self.w)],
             [2 * (self.x * self.y + self.z * self.w), 1 - 2*(self.x ** 2 + self.z ** 2),       2 * (self.z * self.y - self.x * self.w)],
             [2 * (self.x * self.z - self.y * self.w), 2 * (self.z * self.y + self.x * self.w), 1 - 2*(self.x ** 2 + self.y ** 2)      ]
-                         ]), )
+                         ])
         
     def __mul__(self, other):
         if isinstance(other, np.ndarray):
