@@ -1,3 +1,4 @@
+![Demo](demo.png)
 # Geometric Transformer
 
 A Python project demonstrating 2D and 3D geometric transformations, including translation, scaling, Euclidean, similarity, affine, and projective transformations. The project also covers rotations using Rodrigues matrices, quaternions, and exponential twists.
